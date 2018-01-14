@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hello World Animated</title>
+</head>
+<body>
+    <div style="position: absolute; top: 50px; left: 50px;">
+        <canvas id="canvas" width="640" height="480"></canvas>
+    </div>
+    <script type="text/javascript">
+        window.addEventListener('load', eventWindowLoaded, false);
+
+        function eventWindowLoaded() {
+            canvasApp();
+        }
+
+        function canvasApp() {
+            var canvas = document.getElementById('canvas');
+            var context = canvas.getContext('2d');
+            var alpha = 0;
+            var text = 'Hello World';
+            var fadeIn = true;
+            var helloWorldImage = new Image();
+            helloWorldImage.src = 'HTML5.png';
+
+            function drawScreen() {
+                //背景
+                context.globalAlpha = 1;
+                context.fillStyle = '#000';
+                context.fillRect(0, 0, 640, 480);
+                //图像
+                context.globalAlpha = .25;
+                context.drawImage(helloWorldImage, 0, 48);
+
+                if(fadeIn) {
+                    alpha += .01;
+                    if(alpha >= 1) {
+                        alpha = 1;
+                        fadeIn = false;
+                    }
+                } else {
+                    alpha -= .01;
+                    if(alpha < 0) {
+                        alpha = 0;
+                        fadeIn = true;
+                    }
+                }
+
+                //文字
+                context.font = '72px Microsoft Yahei';
+                context.textBaseline = 'top';
+
+                context.globalAlpha = alpha;
+                context.fillStyle = '#fff';
+                context.fillText(text, 150, 200);
+            }
+
+            function gameLoop() {
+                window.setTimeout(gameLoop, 20);
+                drawScreen();
+            }
+            gameLoop();
+        }
+    </script>
+</body>
+</html>
