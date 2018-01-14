@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Guessing letters</title>
+</head>
+<body>
+    <div style="position: absolute; top: 50px; left: 50px;">
+        <canvas id="canvas" width="500" height="300"></canvas>
+    </div>
+    <form>
+        <input type="button" id="createImageData" value="Export Canvas Image">
+    </form>
+    <script type="text/javascript">
+        window.addEventListener('load', eventWindowLoaded, false);
+        function eventWindowLoaded() {
+            canvasApp();
+        }
+        function canvasApp() {
+            var canvas = document.getElementById('canvas');
+            var context = canvas.getContext('2d');
+            var guesses = 0;
+            var message = 'Guess The Letter From a (lower) to z (higher)';
+            var letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+            var today = new Date();
+            var letterToGuess = '';
+            var higherOrlower = '';
+            var lettersGuessed;
+            var gameOver = false;
+            //drawScreen();
+            initGame();
+            function initGame() {
+                var letterIndex = Math.floor(Math.random() * letters.length);
+                letterToGuess = letters[letterIndex];
+                guesses = 0;
+                lettersGuessed = [];
+                gameOver = false;
+                window.addEventListener('keydown', eventKeyPressed, true);
+                drawScreen();
+                var formElement = document.getElementById('createImageData');
+                formElement.addEventListener('click', createImageDataPressed, false);
+                function createImageDataPressed(e) {
+                    window.open(canvas.toDataURL(), 'canvasImage', 'left=0, top=0, width=' + canvas.width + ', height=' + canvas.height + ', toolbar=0, resizable=0');
+                }
+            }
+
+            function eventKeyPressed(e) {
+                if (!gameOver) {
+                    var letterPressed = String.fromCharCode(e.keyCode);
+                    letterPressed = letterPressed.toLocaleLowerCase();
+                    guesses++;
+                    lettersGuessed.push(letterPressed);
+                    if (letterPressed == letterToGuess) {
+                        gameOver = true;
+                    } else {
+                        letterIndex = letters.indexOf(letterToGuess);
+                        guessIndex = letters.indexOf(letterPressed);
+                        if (guessIndex < 0) {
+                            higherOrlower = 'That is not a letter';
+                        } else if (guessIndex > letterIndex) {
+                            higherOrlower = 'Lower';
+                        } else {
+                            higherOrlower = 'Higher';
+                        }
+                    }
+                    drawScreen();
+                }
+            }
+
+            function drawScreen() {
+                //背景
+                context.fillStyle = '#ffffaa';
+                context.fillRect(0, 0, 500, 300);
+                //边框
+                context.strokeStyle = '#000';
+                context.strokeRect(5, 5, 490, 290);
+
+                context.textBaseline = 'top';
+                //日期
+                context.fillStyle = '#000';
+                context.font = '10px Microsoft Yahei';
+                context.fillText(today, 150, 10);
+                //消息
+                context.fillStyle = '#ff0000';
+                context.font = '14px Microsoft Yahei';
+                context.fillText(message, 125, 30);
+                //猜测的次数
+                context.fillStyle = '#109910';
+                context.font = '16px Microsoft Yahei';
+                context.fillText('Guesses: ' + guesses, 215, 50);
+                //显示Higher或Lower
+                context.fillStyle = '#000';
+                context.font = '16px Microsoft Yahei';
+                context.fillText('Higher Or Lower: ' + higherOrlower, 150, 125);
+                //猜过的字母
+                context.fillStyle = '#ff0000';
+                context.font = '16px Microsoft Yahei';
+                context.fillText('Letters Guessed: ' + lettersGuessed.toString(), 10, 260);
+                if (gameOver) {
+                    context.fillStyle = '#ff000';
+                    context.font = '40px Microsoft Yahei';
+                    context.fillText('You Got It!', 150, 180);
+                }
+            }
+        }
+
+        
+    </script>
+</body>
+</html>
